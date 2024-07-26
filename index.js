@@ -7,6 +7,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+
 app.use(express.json());
 app.use(cors({
     origin: "*",
@@ -23,7 +24,7 @@ const db = mysql.createConnection({
 db.connect(err => {
   if (err) {
     console.error('Error connecting to database:', err);
-    return;
+    process.exit(1);
   }
   console.log('Connected to database');
 });
@@ -34,9 +35,13 @@ app.post('/book', (req, res) => {
 
   db.query(query, [workshop_id], (err, result) => {
     if (err) {
+      console.error('Error booking workshop:', err); 
       res.status(500).send('Error booking workshop');
     } else {
-      res.send('Workshop booked successfully');
+      res.status(201).send({
+        message: 'Workshop booked successfully',
+        bookingId: result.insertId,
+      });
     }
   });
 });
@@ -46,6 +51,7 @@ app.get('/bookings', (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
+      console.error('Error fetching bookings:', err); 
       res.status(500).send('Error fetching bookings');
     } else {
       res.json(results);
@@ -59,6 +65,7 @@ app.delete('/book/:id', (req, res) => {
 
   db.query(query, [id], (err, result) => {
     if (err) {
+      console.error('Error deleting booking:', err); 
       res.status(500).send('Error deleting booking');
     } else {
       res.send('Booking deleted successfully');
@@ -66,6 +73,21 @@ app.delete('/book/:id', (req, res) => {
   });
 });
 
-app.listen(port, () => {
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    console.log('HTTP server closed');
+    db.end(err => {
+      if (err) {
+        console.error('Error closing database connection:', err);
+      } else {
+        console.log('Database connection closed');
+      }
+      process.exit(0);
+    });
+  });
+});
+
+const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
