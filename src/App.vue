@@ -1,4 +1,5 @@
 <template>
+  
   <div class="header">
     <div class="cont">
       <nav class="navbar">
@@ -7,11 +8,11 @@
         </div>
         <div class="menu">
           <ul>
-              <li><a href="#home">Home</a></li>
-              <li><a href="#contact">Contact</a></li>
-              <li><a href="#Workshops">Bookings</a></li>
-              
-            </ul>
+            <li><router-link to="/">Home</router-link></li>
+            <li><router-link to="/Contact">Contact</router-link></li>
+            <li><router-link to="/Workshops">Bookings</router-link></li>
+     
+          </ul>
         </div>
         <div class="menu-toggle" @click="toggleMenu">
           <span class="bar"></span>

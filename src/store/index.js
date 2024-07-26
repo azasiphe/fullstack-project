@@ -1,7 +1,7 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
 
-const baseUrl = 'http://localhost:3000/';
+const baseUrl = 'https://fullstackproject-9o85.onrender.com/';
 
 export default createStore({
   state: {
@@ -36,4 +36,5 @@ export default createStore({
   getters: {
     allBookings: state => state.bookings,
   },
+  
 });
